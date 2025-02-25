@@ -1,0 +1,372 @@
+.product-details {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+/* Sección de imágenes */
+.product-images {
+  position: relative;
+}
+
+.main-image-container {
+  position: relative;
+  width: 100%;
+  padding-top: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.main-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.main-image:hover {
+  transform: scale(1.05);
+}
+
+.thumbnails-carousel {
+  margin-top: 1rem;
+  position: relative;
+  padding: 0 2rem;
+}
+
+.thumbnails-container {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 0.5rem 0;
+}
+
+.thumbnails-container::-webkit-scrollbar {
+  display: none;
+}
+
+.thumbnail-wrapper {
+  flex: 0 0 80px;
+  height: 80px;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+.thumbnail-wrapper.active {
+  opacity: 1;
+  border: 2px solid #4f46e5;
+}
+
+.thumbnail-wrapper:hover {
+  opacity: 1;
+}
+
+.thumbnail-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.carousel-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.carousel-nav.prev {
+  left: 0;
+}
+
+.carousel-nav.next {
+  right: 0;
+}
+
+.carousel-nav:hover {
+  background: #f3f4f6;
+  transform: translateY(-50%) scale(1.1);
+}
+
+/* Información del producto */
+.product-info {
+  padding: 1rem;
+}
+
+.product-title {
+  font-size: 2rem;
+  color: #1f2937;
+  margin: 0 0 1rem 0;
+}
+
+.product-description {
+  color: #4b5563;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.product-specs {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.spec-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.spec-item span:first-child {
+  color: #6b7280;
+}
+
+.spec-item span:last-child {
+  color: #1f2937;
+  font-weight: 500;
+}
+
+.product-price {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #4f46e5;
+  margin-bottom: 1.5rem;
+}
+
+.product-quantity {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.product-quantity button {
+  background: #f3f4f6;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.product-quantity button:hover:not(:disabled) {
+  background: #e5e7eb;
+}
+
+.product-quantity button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.product-quantity span {
+  min-width: 2rem;
+  text-align: center;
+  font-size: 1.1rem;
+  color: #1f2937;
+}
+
+.action-buttons {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+}
+
+.action-btn {
+  padding: 0.75rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+}
+
+.action-btn.add-to-cart {
+  background-color: #4f46e5;
+  color: white;
+}
+
+.action-btn.add-to-cart:hover:not(:disabled) {
+  background-color: #4338ca;
+  transform: translateY(-1px);
+}
+
+.action-btn.add-to-cart:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.action-btn.add-to-cart.added {
+  background-color: #059669;
+}
+
+.action-btn.contact-whatsapp {
+  background-color: #25d366;
+  color: white;
+}
+
+.action-btn.contact-whatsapp:hover {
+  background-color: #128c7e;
+  transform: translateY(-1px);
+}
+
+/* Modal de imagen */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 2;
+  padding: 0.5rem;
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: #e5e7eb;
+}
+
+.modal-image-container {
+  position: relative;
+}
+
+.modal-image {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+}
+
+.modal-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.modal-nav.prev {
+  left: 1rem;
+}
+
+.modal-nav.next {
+  right: 1rem;
+}
+
+.modal-nav:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-counter {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+}
+
+/* Estados de carga y error */
+.loading-container,
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #4f46e5;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.error-message {
+  color: #ef4444;
+  text-align: center;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .product-details {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+    margin: 1rem;
+  }
+
+  .action-buttons {
+    grid-template-columns: 1fr;
+  }
+}
