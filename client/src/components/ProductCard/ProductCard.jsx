@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaRuler, FaUsers, FaShoppingCart, FaCheck } from 'react-icons/fa';
 import { useCarrito } from '../../context/CartContext';
-import { toast } from 'react-toastify';
 import './ProductCard.css';
 
 const ProductCard = ({ producto }) => {
@@ -20,7 +19,6 @@ const ProductCard = ({ producto }) => {
     e.preventDefault(); // Evita la navegación al detalle del producto
     agregarAlCarrito(producto, 1);
     setAddedToCart(true);
-    toast.success('Producto agregado al carrito');
   };
 
   return (

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaTrash, FaArrowLeft, FaWhatsapp } from 'react-icons/fa';
+import { FaTrash, FaArrowLeft, FaWhatsapp, FaPlus } from 'react-icons/fa';
 import { useCarrito } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
@@ -170,7 +170,7 @@ const Carrito = () => {
       </div>
 
       <div className="cart-summary">
-        <div className="total">
+        <div className="cart-total">
           <span>Total estimado:</span>
           <span>${calcularTotal().toFixed(2)}</span>
         </div>
@@ -312,9 +312,9 @@ const Carrito = () => {
           </div>
 
           <div className="form-actions">
-            <button type="button" className="back-button" onClick={() => setShowForm(false)}>
-              <FaArrowLeft /> Volver al carrito
-            </button>
+            <Link to="/productos" className="back-button">
+              <FaArrowLeft /> Agregar más productos
+            </Link>
             <button type="submit" className="submit-button">
               <FaWhatsapp /> Enviar cotización por WhatsApp
             </button>

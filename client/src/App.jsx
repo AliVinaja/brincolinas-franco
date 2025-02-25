@@ -16,6 +16,7 @@ import Register from './pages/Register';
 import Contacto from './pages/Contacto';
 import Nosotros from './pages/Nosotros';
 import Carrito from './pages/Carrito';
+import ScrollToTop from './components/ScrollToTop/ScrollToTop';
 
 import './App.css';
 
@@ -24,6 +25,7 @@ function App() {
     <Router>
       <AuthProvider>
         <CarritoProvider>
+          <ScrollToTop />
           <div className="min-h-screen flex flex-col">
             <Navbar />
             <ToastContainer position="bottom-right" />

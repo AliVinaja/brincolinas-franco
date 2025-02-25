@@ -8,21 +8,15 @@ router.get('/', async (req, res) => {
   try {
     console.log('🔍 Buscando todos los productos...');
     
-    // Mostrar la consulta SQL que se va a ejecutar
     const productos = await Producto.findAll({
       include: [{ 
         model: Categoria,
         as: 'categoria',
-        attributes: ['id', 'nombre', 'slug']
-      }],
-      logging: console.log // Esto mostrará la consulta SQL
+        attributes: ['id', 'nombre']
+      }]
     });
     
     console.log(`✅ Se encontraron ${productos.length} productos`);
-    if (productos.length > 0) {
-      console.log('📝 Ejemplo de producto:', JSON.stringify(productos[0], null, 2));
-    }
-    
     res.json(productos);
   } catch (error) {
     console.error('❌ Error al obtener productos:', error);
@@ -42,21 +36,20 @@ router.get('/:id', async (req, res) => {
       include: [{ 
         model: Categoria,
         as: 'categoria',
-        attributes: ['id', 'nombre', 'slug']
-      }],
-      logging: console.log // Esto mostrará la consulta SQL
+        attributes: ['id', 'nombre']
+      }]
     });
     
     if (!producto) {
       console.log(`❌ No se encontró el producto con ID ${id}`);
       return res.status(404).json({ message: 'Producto no encontrado' });
     }
-    
-    console.log('✅ Producto encontrado:', JSON.stringify(producto, null, 2));
+
+    console.log('✅ Producto encontrado:', producto.nombre);
     res.json(producto);
   } catch (error) {
-    console.error('❌ Error al obtener producto:', error);
-    res.status(500).json({ message: error.message });
+    console.error('❌ Error al obtener el producto:', error);
+    res.status(500).json({ message: 'Error al obtener el producto', error: error.message });
   }
 });
 
@@ -69,7 +62,7 @@ router.get('/categoria/:categoriaId', async (req, res) => {
       include: [{ 
         model: Categoria,
         as: 'categoria',
-        attributes: ['id', 'nombre', 'slug']
+        attributes: ['id', 'nombre']
       }]
     });
     console.log(`✅ Se encontraron ${productos.length} productos`);
@@ -97,14 +90,14 @@ router.post('/', async (req, res) => {
       stock
     });
     
-    console.log('✅ Producto creado:', JSON.stringify(producto, null, 2));
+    console.log('✅ Producto creado:', producto.nombre);
     
     // Obtener el producto con la categoría incluida
     const productoConCategoria = await Producto.findByPk(producto.id, {
       include: [{ 
         model: Categoria,
         as: 'categoria',
-        attributes: ['id', 'nombre', 'slug']
+        attributes: ['id', 'nombre']
       }]
     });
     
@@ -144,11 +137,11 @@ router.put('/:id', async (req, res) => {
       include: [{ 
         model: Categoria,
         as: 'categoria',
-        attributes: ['id', 'nombre', 'slug']
+        attributes: ['id', 'nombre']
       }]
     });
     
-    console.log('✅ Producto actualizado:', JSON.stringify(productoActualizado, null, 2));
+    console.log('✅ Producto actualizado:', productoActualizado.nombre);
     res.json(productoActualizado);
   } catch (error) {
     console.error('❌ Error al actualizar producto:', error);

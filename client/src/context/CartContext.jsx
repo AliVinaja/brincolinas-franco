@@ -72,15 +72,13 @@ export const CarritoProvider = ({ children }) => {
       const productoExistente = nuevoCarrito.find(item => item.id === producto.id);
       
       if (productoExistente) {
-        // Sumar la nueva cantidad a la cantidad existente
         productoExistente.cantidad = (productoExistente.cantidad || 1) + cantidadNueva;
       } else {
-        // Agregar el producto con la cantidad especificada
         nuevoCarrito.push({ ...producto, cantidad: cantidadNueva });
       }
 
       await guardarCarrito(nuevoCarrito);
-      toast.success('Producto agregado al carrito');
+      toast.success('Producto agregado al carrito'); 
     } catch (error) {
       console.error('Error al agregar al carrito:', error);
       toast.error('Error al agregar al carrito');

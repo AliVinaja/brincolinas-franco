@@ -7,7 +7,6 @@ router.get('/', async (req, res) => {
   try {
     console.log('🔍 Buscando todas las categorías...');
     const categorias = await Categoria.findAll({
-      order: [['orden', 'ASC']],
       include: [{
         model: Producto,
         as: 'productos',
@@ -22,21 +21,21 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Obtener una categoría por slug
-router.get('/:slug', async (req, res) => {
+// Obtener una categoría por ID
+router.get('/:id', async (req, res) => {
   try {
-    console.log(`🔍 Buscando categoría con slug ${req.params.slug}...`);
-    const categoria = await Categoria.findOne({ 
-      where: { slug: req.params.slug },
+    const id = parseInt(req.params.id, 10);
+    console.log(`🔍 Buscando categoría con ID ${id}...`);
+    const categoria = await Categoria.findByPk(id, {
       include: [{
         model: Producto,
         as: 'productos',
-        attributes: ['id', 'nombre', 'descripcion', 'precio', 'imagenes', 'dimensiones', 'capacidad', 'stock']
+        attributes: ['id', 'nombre', 'descripcion', 'precio', 'imagenes', 'capacidad']
       }]
     });
     
     if (!categoria) {
-      console.log(`❌ No se encontró la categoría con slug ${req.params.slug}`);
+      console.log(`❌ No se encontró la categoría con ID ${id}`);
       return res.status(404).json({ message: 'Categoría no encontrada' });
     }
     
