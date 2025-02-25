@@ -1,5 +1,6 @@
 import React from 'react';
-import { FaWhatsapp, FaPhone, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaWhatsapp, FaPhone, FaEnvelope, FaMapMarkerAlt, FaFacebook } from 'react-icons/fa';
+import { WHATSAPP_NUMBER, FACEBOOK_URL } from '../config/constants';
 
 const Contacto = () => {
   return (
@@ -81,12 +82,12 @@ const Contacto = () => {
             <div>
               <h3 className="font-medium">WhatsApp</h3>
               <a 
-                href={`https://wa.me/${process.env.REACT_APP_WHATSAPP_NUMBER}`}
-                className="text-blue-600 hover:text-blue-800"
+                href={`https://wa.me/${WHATSAPP_NUMBER}`}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800"
               >
-                Envíanos un mensaje
+                +52 686 589 8160
               </a>
             </div>
           </div>
@@ -109,6 +110,21 @@ const Contacto = () => {
             <div>
               <h3 className="font-medium">Ubicación</h3>
               <p>Tijuana, Baja California</p>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <FaFacebook className="text-blue-600 text-xl" />
+            <div>
+              <h3 className="font-medium">Facebook</h3>
+              <a
+                href={FACEBOOK_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800"
+              >
+                Brincolinas Franco
+              </a>
             </div>
           </div>
         </div>

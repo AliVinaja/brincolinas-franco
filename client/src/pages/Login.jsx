@@ -13,15 +13,28 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validaciones del lado del cliente
+    if (!email.trim() || !password.trim()) {
+      toast.error('Por favor, completa todos los campos');
+      return;
+    }
+
+    if (!email.includes('@')) {
+      toast.error('Por favor, ingresa un correo electrónico válido');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await login(email, password);
-      toast.success('¡Inicio de sesión exitoso!');
-      navigate('/');
+      const result = await login(email, password);
+      if (!result.success) {
+        toast.error(result.error);
+      }
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
-      toast.error(error.message || 'Error al iniciar sesión');
+      toast.error('Error al iniciar sesión. Por favor, intenta de nuevo');
     } finally {
       setLoading(false);
     }
@@ -41,6 +54,7 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={loading}
             />
           </div>
           <div className="form-group">
@@ -52,6 +66,7 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              disabled={loading}
             />
           </div>
           <button 

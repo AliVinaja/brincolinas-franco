@@ -15,7 +15,6 @@ export const CarritoProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  // Suscribirse a cambios en el carrito
   useEffect(() => {
     let unsubscribe;
 
@@ -62,7 +61,7 @@ export const CarritoProvider = ({ children }) => {
     }
   };
 
-  const agregarAlCarrito = async (producto) => {
+  const agregarAlCarrito = async (producto, cantidadNueva = 1) => {
     if (!user) {
       toast.error('Debes iniciar sesión para agregar productos al carrito');
       return;
@@ -73,15 +72,39 @@ export const CarritoProvider = ({ children }) => {
       const productoExistente = nuevoCarrito.find(item => item.id === producto.id);
       
       if (productoExistente) {
-        productoExistente.cantidad = (productoExistente.cantidad || 1) + 1;
+        // Sumar la nueva cantidad a la cantidad existente
+        productoExistente.cantidad = (productoExistente.cantidad || 1) + cantidadNueva;
       } else {
-        nuevoCarrito.push({ ...producto, cantidad: 1 });
+        // Agregar el producto con la cantidad especificada
+        nuevoCarrito.push({ ...producto, cantidad: cantidadNueva });
       }
 
       await guardarCarrito(nuevoCarrito);
       toast.success('Producto agregado al carrito');
     } catch (error) {
       console.error('Error al agregar al carrito:', error);
+      toast.error('Error al agregar al carrito');
+    }
+  };
+
+  const actualizarCantidad = async (productoId, nuevaCantidad) => {
+    if (!user) return;
+
+    try {
+      const nuevoCarrito = [...carrito];
+      const producto = nuevoCarrito.find(item => item.id === productoId);
+      
+      if (producto) {
+        if (nuevaCantidad <= 0) {
+          await eliminarDelCarrito(productoId);
+          return;
+        }
+        producto.cantidad = nuevaCantidad;
+        await guardarCarrito(nuevoCarrito);
+      }
+    } catch (error) {
+      console.error('Error al actualizar la cantidad:', error);
+      toast.error('Error al actualizar la cantidad');
     }
   };
 
@@ -94,6 +117,7 @@ export const CarritoProvider = ({ children }) => {
       toast.success('Producto eliminado del carrito');
     } catch (error) {
       console.error('Error al eliminar del carrito:', error);
+      toast.error('Error al eliminar del carrito');
     }
   };
 
@@ -105,11 +129,14 @@ export const CarritoProvider = ({ children }) => {
       toast.success('Carrito vaciado');
     } catch (error) {
       console.error('Error al limpiar el carrito:', error);
+      toast.error('Error al limpiar el carrito');
     }
   };
 
   const calcularTotal = () => {
-    return carrito.reduce((total, item) => total + (item.precio * (item.cantidad || 1)), 0);
+    return carrito.reduce((total, item) => {
+      return total + (item.precio * (item.cantidad || 1));
+    }, 0);
   };
 
   const value = {
@@ -118,7 +145,8 @@ export const CarritoProvider = ({ children }) => {
     agregarAlCarrito,
     eliminarDelCarrito,
     limpiarCarrito,
-    calcularTotal
+    calcularTotal,
+    actualizarCantidad
   };
 
   return (

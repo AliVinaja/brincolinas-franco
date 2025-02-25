@@ -15,6 +15,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Contacto from './pages/Contacto';
 import Nosotros from './pages/Nosotros';
+import Carrito from './pages/Carrito';
 
 import './App.css';
 
@@ -35,6 +36,7 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/contacto" element={<Contacto />} />
                 <Route path="/nosotros" element={<Nosotros />} />
+                <Route path="/carrito" element={<Carrito />} />
               </Routes>
             </main>
             <Footer />

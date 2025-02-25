@@ -36,3 +36,10 @@
     transform: rotate(360deg);
   }
 }
+
+/* Estilos globales */
+main {
+  padding-top: 60px; /* Reducido de 80px a 65px */
+}
+
+/* Otros estilos globales aquí */

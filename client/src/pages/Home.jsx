@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaCheckCircle, FaWhatsapp } from 'react-icons/fa';
+import { WHATSAPP_NUMBER } from '../config/constants';
 
 const Home = () => {
   return (
@@ -23,7 +24,7 @@ const Home = () => {
                 Ver Productos
               </Link>
               <a
-                href="https://wa.me/1234567890"
+                href={`https://wa.me/${WHATSAPP_NUMBER}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-secondary flex items-center"

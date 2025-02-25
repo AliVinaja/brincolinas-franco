@@ -37,8 +37,26 @@ export const AuthProvider = ({ children }) => {
       return { success: true };
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
-      toast.error(error.message || 'Error al iniciar sesión');
-      return { success: false, error: error.message };
+      // Mapeamos los códigos de error de Firebase a mensajes personalizados
+      let errorMessage;
+      switch (error.code) {
+        case 'auth/invalid-credential':
+        case 'auth/wrong-password':
+          errorMessage = 'Credenciales incorrectas';
+          break;
+        case 'auth/user-not-found':
+          errorMessage = 'No existe una cuenta con este correo electrónico';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Demasiados intentos fallidos. Por favor, intenta más tarde';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'El formato del correo electrónico no es válido';
+          break;
+        default:
+          errorMessage = 'Error al iniciar sesión. Por favor, intenta de nuevo';
+      }
+      return { success: false, error: errorMessage };
     }
   };
 
@@ -57,7 +75,8 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     login,
-    logout
+    logout,
+    loading
   };
 
   return (

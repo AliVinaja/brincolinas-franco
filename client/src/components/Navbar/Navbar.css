@@ -1,6 +1,6 @@
 .navbar {
   background-color: #ffffff;
-  padding: 1rem 2rem;
+  padding: 0.5rem 2rem;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   display: flex;
   justify-content: space-between;
@@ -10,6 +10,7 @@
   left: 0;
   right: 0;
   z-index: 100;
+  height: 64px; /* Altura fija del navbar */
 }
 
 .container {
@@ -158,7 +159,7 @@
 
 @media (max-width: 768px) {
   .navbar {
-    padding: 1rem;
+    padding: 0.5rem;
   }
 
   .nav-toggle {

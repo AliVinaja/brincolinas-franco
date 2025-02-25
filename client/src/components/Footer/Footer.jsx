@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaFacebook, FaInstagram, FaWhatsapp, FaPhone, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
+import { WHATSAPP_NUMBER, FACEBOOK_URL } from '../../config/constants';
 import './Footer.css';
 import ScrollToTopButton from '../ScrollToTopButton';
 
@@ -94,7 +95,7 @@ const Footer = () => {
             <h3 className="title">Síguenos</h3>
             <div className="social">
               <a
-                href="https://facebook.com"
+                href={FACEBOOK_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-link"
@@ -110,7 +111,7 @@ const Footer = () => {
                 <FaInstagram size={24} />
               </a>
               <a
-                href="https://wa.me/1234567890"
+                href={`https://wa.me/${WHATSAPP_NUMBER}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-link"

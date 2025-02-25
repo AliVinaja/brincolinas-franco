@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useCarrito } from '../context/CartContext';
 import { FaWhatsapp, FaShoppingCart, FaTimes, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { WHATSAPP_NUMBER } from '../config/constants';
 import './ProductDetails.css';
 
 const ProductDetails = () => {
@@ -102,12 +103,8 @@ const ProductDetails = () => {
   }, [state.producto, cantidad, selectedDate, selectedTime, duration, agregarAlCarrito]);
 
   const handleWhatsApp = useCallback(() => {
-    if (!state.producto) return;
-    
-    const whatsappNumber = process.env.REACT_APP_WHATSAPP_NUMBER || '+1234567890';
-    const message = `Hola, estoy interesado en rentar el producto: ${state.producto.nombre}`;
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-    
+    const message = `¡Hola! Me interesa el producto "${state.producto.nombre}" que vi en su página web. ¿Podrían darme más información?`;
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   }, [state.producto]);
 
