@@ -49,12 +49,28 @@ const Producto = sequelize.define('Producto', {
     type: DataTypes.JSON,
     allowNull: true,
     get() {
-      const rawValue = this.getDataValue('imagenes');
-      return rawValue ? JSON.parse(rawValue) : [];
+      const value = this.getDataValue('imagenes');
+      return typeof value === 'string' ? JSON.parse(value) : value;
     },
     set(value) {
-      this.setDataValue('imagenes', JSON.stringify(value));
+      this.setDataValue('imagenes', typeof value === 'string' ? value : JSON.stringify(value));
     }
+  },
+  dimensiones: {
+    type: DataTypes.JSON,
+    allowNull: true,
+    get() {
+      const value = this.getDataValue('dimensiones');
+      return typeof value === 'string' ? JSON.parse(value) : value;
+    },
+    set(value) {
+      this.setDataValue('dimensiones', typeof value === 'string' ? value : JSON.stringify(value));
+    }
+  },
+  stock: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 1
   },
   categoria_id: {
     type: DataTypes.INTEGER,

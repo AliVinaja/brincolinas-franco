@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaFacebook, FaInstagram, FaWhatsapp, FaPhone, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaFacebook, FaWhatsapp, FaPhone, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
 import { WHATSAPP_NUMBER, FACEBOOK_URL } from '../../config/constants';
 import './Footer.css';
 import ScrollToTopButton from '../ScrollToTopButton';
@@ -100,15 +100,8 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className="social-link"
               >
-                <FaFacebook size={24} />
-              </a>
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="social-link"
-              >
-                <FaInstagram size={24} />
+                <FaFacebook className="icon" />
+                <span>Facebook</span>
               </a>
               <a
                 href={`https://wa.me/${WHATSAPP_NUMBER}`}
@@ -116,13 +109,9 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className="social-link"
               >
-                <FaWhatsapp size={24} />
+                <FaWhatsapp className="icon" />
+                <span>WhatsApp</span>
               </a>
-            </div>
-            <div className="mt-4">
-              <p className="description text-sm">
-                ¡Síguenos en redes sociales para ver nuestros últimos productos y ofertas especiales!
-              </p>
             </div>
           </div>
         </div>

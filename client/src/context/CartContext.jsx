@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
 import { db } from '../config/firebaseConfig';
 import { doc, setDoc, onSnapshot } from 'firebase/firestore';
@@ -61,27 +61,37 @@ export const CarritoProvider = ({ children }) => {
     }
   };
 
-  const agregarAlCarrito = async (producto, cantidadNueva = 1) => {
-    if (!user) {
-      toast.error('Debes iniciar sesión para agregar productos al carrito');
-      return;
-    }
-
+  const agregarAlCarrito = async (producto) => {
     try {
+      if (!user) {
+        toast.error('Debes iniciar sesión para agregar productos al carrito');
+        return;
+      }
+
+      const productoParaCarrito = {
+        id: producto.id,
+        nombre: producto.nombre,
+        precio: producto.precio,
+        cantidad: producto.cantidad,
+        imagenes: producto.imagenes || []
+      };
+
       const nuevoCarrito = [...carrito];
-      const productoExistente = nuevoCarrito.find(item => item.id === producto.id);
-      
-      if (productoExistente) {
-        productoExistente.cantidad = (productoExistente.cantidad || 1) + cantidadNueva;
+      const productoExistente = nuevoCarrito.findIndex(
+        item => item.id === producto.id
+      );
+
+      if (productoExistente !== -1) {
+        nuevoCarrito[productoExistente].cantidad += producto.cantidad;
       } else {
-        nuevoCarrito.push({ ...producto, cantidad: cantidadNueva });
+        nuevoCarrito.push(productoParaCarrito);
       }
 
       await guardarCarrito(nuevoCarrito);
-      toast.success('Producto agregado al carrito'); 
+      toast.success('Producto agregado al carrito');
     } catch (error) {
       console.error('Error al agregar al carrito:', error);
-      toast.error('Error al agregar al carrito');
+      toast.error('Error al agregar el producto al carrito');
     }
   };
 
@@ -107,44 +117,49 @@ export const CarritoProvider = ({ children }) => {
   };
 
   const eliminarDelCarrito = async (productoId) => {
-    if (!user) return;
-
     try {
+      if (!user) {
+        toast.error('Debes iniciar sesión para modificar el carrito');
+        return;
+      }
+
       const nuevoCarrito = carrito.filter(item => item.id !== productoId);
       await guardarCarrito(nuevoCarrito);
       toast.success('Producto eliminado del carrito');
     } catch (error) {
       console.error('Error al eliminar del carrito:', error);
-      toast.error('Error al eliminar del carrito');
+      toast.error('Error al eliminar el producto del carrito');
     }
   };
 
-  const limpiarCarrito = async () => {
+  const vaciarCarrito = async () => {
     if (!user) return;
 
     try {
-      await guardarCarrito([]);
-      toast.success('Carrito vaciado');
+      const carritoRef = doc(db, 'carritos', user.uid);
+      await setDoc(carritoRef, { items: [] }, { merge: true });
+      toast.success('Carrito vaciado exitosamente');
     } catch (error) {
-      console.error('Error al limpiar el carrito:', error);
-      toast.error('Error al limpiar el carrito');
+      console.error('Error al vaciar el carrito:', error);
+      toast.error('Error al vaciar el carrito');
+      throw error;
     }
   };
 
-  const calcularTotal = () => {
+  const calcularTotal = useCallback(() => {
     return carrito.reduce((total, item) => {
-      return total + (item.precio * (item.cantidad || 1));
+      return total + (item.precio * item.cantidad);
     }, 0);
-  };
+  }, [carrito]);
 
   const value = {
     carrito,
     loading,
     agregarAlCarrito,
     eliminarDelCarrito,
-    limpiarCarrito,
+    actualizarCantidad,
     calcularTotal,
-    actualizarCantidad
+    vaciarCarrito
   };
 
   return (

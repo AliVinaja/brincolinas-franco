@@ -6,7 +6,7 @@ import './ProductCard.css';
 
 const ProductCard = ({ producto }) => {
   const { id, nombre, descripcion, precio, imagenes, dimensiones, capacidad } = producto;
-  const { agregarAlCarrito, carrito } = useCarrito();
+  const { agregarAlCarrito, eliminarDelCarrito, carrito } = useCarrito();
   const [addedToCart, setAddedToCart] = useState(false);
 
   // Verificar si el producto está en el carrito
@@ -15,10 +15,20 @@ const ProductCard = ({ producto }) => {
     setAddedToCart(isInCart);
   }, [carrito, id]);
 
-  const handleAddToCart = (e) => {
+  const handleCartAction = (e) => {
     e.preventDefault(); // Evita la navegación al detalle del producto
-    agregarAlCarrito(producto, 1);
-    setAddedToCart(true);
+    
+    if (addedToCart) {
+      eliminarDelCarrito(id);
+      setAddedToCart(false);
+    } else {
+      const productoParaCarrito = {
+        ...producto,
+        cantidad: 1
+      };
+      agregarAlCarrito(productoParaCarrito);
+      setAddedToCart(true);
+    }
   };
 
   return (
@@ -37,9 +47,7 @@ const ProductCard = ({ producto }) => {
             <div className="spec">
               <FaRuler className="spec-icon" />
               <span>
-                {Object.entries(dimensiones)
-                  .map(([key, value]) => `${key}: ${value}`)
-                  .join(', ')}
+                {dimensiones.largo}x{dimensiones.ancho}x{dimensiones.alto}m
               </span>
             </div>
           )}
@@ -55,9 +63,8 @@ const ProductCard = ({ producto }) => {
         <div className="price-cart-container">
           <div className="price">${Number(precio).toLocaleString('es-MX')}</div>
           <button 
-            onClick={handleAddToCart}
+            onClick={handleCartAction}
             className={`add-to-cart-btn ${addedToCart ? 'added' : ''}`}
-            disabled={addedToCart}
           >
             {addedToCart ? (
               <>

@@ -93,14 +93,18 @@ const ProductDetails = () => {
 
   const handleAddToCart = useCallback(() => {
     if (cantidad <= state.producto.stock) {
-      agregarAlCarrito(state.producto, cantidad, selectedDate, selectedTime, duration);
+      const productoParaCarrito = {
+        ...state.producto,
+        cantidad
+      };
+      
+      agregarAlCarrito(productoParaCarrito);
       setAddedToCart(true);
-      toast.success('Producto agregado al carrito');
       setTimeout(() => setAddedToCart(false), 2000);
     } else {
       toast.error('No hay suficiente stock disponible');
     }
-  }, [state.producto, cantidad, selectedDate, selectedTime, duration, agregarAlCarrito]);
+  }, [state.producto, cantidad, agregarAlCarrito]);
 
   const handleWhatsApp = useCallback(() => {
     const message = `¡Hola! Me interesa el producto "${state.producto.nombre}" que vi en su página web. ¿Podrían darme más información?`;
@@ -225,7 +229,7 @@ const ProductDetails = () => {
           <button
             className={`action-btn add-to-cart ${addedToCart ? 'added' : ''}`}
             onClick={handleAddToCart}
-            disabled={!producto.disponible || addedToCart}
+            disabled={addedToCart}
           >
             <FaShoppingCart />
             {addedToCart ? 'Agregado' : 'Agregar al carrito'}

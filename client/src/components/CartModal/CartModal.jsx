@@ -10,6 +10,7 @@ const CartModal = ({ isOpen, onClose }) => {
   const { carrito, eliminarDelCarrito, calcularTotal, actualizarCantidad } = useCarrito();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const total = calcularTotal();
 
   if (!isOpen) return null;
 
@@ -95,7 +96,7 @@ const CartModal = ({ isOpen, onClose }) => {
           <div className="cart-footer">
             <div className="cart-total">
               <span>Total:</span>
-              <span>${calcularTotal().toFixed(2)}</span>
+              <span>${total.toFixed(2)}</span>
             </div>
             <button className="checkout-button" onClick={handleCheckout}>
               Proceder al Pago

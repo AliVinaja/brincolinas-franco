@@ -1,0 +1,30 @@
+.location-picker {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.location-picker-error {
+  border: 1px solid #f87171;
+  background-color: #fef2f2;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.selected-address {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f3f4f6;
+  border-radius: 0.5rem;
+}
+
+.selected-address strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #374151;
+}
+
+.selected-address p {
+  margin: 0;
+  color: #4b5563;
+}

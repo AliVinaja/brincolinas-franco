@@ -4,29 +4,74 @@ import { FaTrash, FaArrowLeft, FaWhatsapp, FaPlus } from 'react-icons/fa';
 import { useCarrito } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
+import LocationPicker from '../components/LocationPicker/LocationPicker';
 import './Carrito.css';
 import { WHATSAPP_NUMBER } from '../config/constants';
 
 const Carrito = () => {
-  const { carrito = [], eliminarDelCarrito, actualizarCantidad, calcularTotal, limpiarCarrito } = useCarrito();
+  const { carrito = [], eliminarDelCarrito, actualizarCantidad, calcularTotal, vaciarCarrito } = useCarrito();
   const { user } = useAuth();
   const [showForm, setShowForm] = useState(false);
+  
+  // Obtener la fecha actual en formato YYYY-MM-DD
+  const today = new Date().toISOString().split('T')[0];
+  
+  // Generar las opciones de hora (10:00 AM a 11:00 PM, cada 30 minutos)
+  const generateTimeOptions = () => {
+    const options = [];
+    for (let hour = 10; hour <= 23; hour++) {
+      const hour12 = hour > 12 ? hour - 12 : hour;
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      
+      // Agregar opción para la hora en punto
+      options.push({
+        value: `${hour.toString().padStart(2, '0')}:00`,
+        label: `${hour12}:00 ${ampm}`
+      });
+      
+      // Agregar opción para la media hora
+      options.push({
+        value: `${hour.toString().padStart(2, '0')}:30`,
+        label: `${hour12}:30 ${ampm}`
+      });
+    }
+    return options;
+  };
+
+  const timeOptions = generateTimeOptions();
+
   const [formData, setFormData] = useState({
     nombre: user?.displayName || '',
     telefono: '',
     email: user?.email || '',
     direccion: '',
+    coordenadas: null,
     fechaEvento: '',
-    horaInicio: '',
-    duracion: '4',
+    horaEntrega: '10:00',
+    horaRecogida: '10:00',
     notasAdicionales: ''
   });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    
+    // Validación adicional para la fecha
+    if (name === 'fechaEvento' && value < today) {
+      toast.error('No se pueden seleccionar fechas pasadas');
+      return;
+    }
+    
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+  };
+
+  const handleLocationSelect = (location) => {
+    setFormData(prev => ({
+      ...prev,
+      direccion: location.address,
+      coordenadas: location.coordinates
     }));
   };
 
@@ -37,45 +82,91 @@ const Carrito = () => {
   };
 
   const formatWhatsAppMessage = () => {
-    const items = carrito.map(item => 
-      `- ${item.nombre} x${item.cantidad} - $${(item.precio * item.cantidad).toFixed(2)}`
-    ).join('\\n');
+    // Formatear la lista de productos
+    const items = carrito.map(item => {
+      const precio = Number(item.precio);
+      return `* ${item.nombre}\n   - Cantidad: ${item.cantidad}\n   - Precio: $${precio.toFixed(2)}`;
+    }).join('\n\n');
 
-    const message = 
-      `¡Hola! Me interesa rentar los siguientes productos:\\n\\n` +
-      `${items}\\n\\n` +
-      `Total: $${calcularTotal().toFixed(2)}\\n\\n` +
-      `Datos para la renta:\\n` +
-      `Nombre: ${formData.nombre}\\n` +
-      `Teléfono: ${formData.telefono}\\n` +
-      `Email: ${formData.email}\\n` +
-      `Dirección del evento: ${formData.direccion}\\n` +
-      `Fecha del evento: ${formData.fechaEvento}\\n` +
-      `Hora de inicio: ${formData.horaInicio}\\n` +
-      `Duración aproximada: ${formData.duracion} horas\\n` +
-      `Notas adicionales: ${formData.notasAdicionales}\\n\\n` +
-      `¿Podrían confirmarme la disponibilidad y proceder con la renta?`;
+    const total = calcularTotal().toFixed(2);
+    
+    let message = 
+      `¡Hola! Me gustaría hacer una cotización para renta de brincolines.\n\n` +
+      
+      `Me interesan los siguientes productos:\n` +
+      `${items}\n\n` +
+      
+      `Total: $${total}\n\n` +
+      
+      `Mis datos son:\n` +
+      `* Nombre: ${formData.nombre}\n` +
+      `* Teléfono: ${formData.telefono}\n` +
+      `* Email: ${formData.email}\n` +
+      `* Dirección del evento: ${formData.direccion}\n\n` +
+      
+      `Para la siguiente fecha y horario:\n` +
+      `* Fecha del evento: ${formData.fechaEvento}\n` +
+      `* Hora para entrega: ${formData.horaEntrega}\n` +
+      `* Hora para recoger: ${formData.horaRecogida}`;
+
+    // Solo agregar coordenadas si fueron seleccionadas
+    if (formData.coordenadas) {
+      message += `\n\nLa ubicación exacta es:\n` +
+                `* Coordenadas: ${formData.coordenadas.lat},${formData.coordenadas.lng}`;
+    }
+
+    // Agregar notas adicionales solo si existen
+    if (formData.notasAdicionales?.trim()) {
+      message += `\n\nInformación adicional:\n` +
+                `${formData.notasAdicionales}`;
+    }
+
+    message += `\n\n¿Me podrían confirmar disponibilidad por favor? Gracias.`;
 
     return encodeURIComponent(message);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validar campos requeridos
-    const requiredFields = ['nombre', 'telefono', 'email', 'direccion', 'fechaEvento', 'horaInicio'];
-    const missingFields = requiredFields.filter(field => !formData[field]);
+    // Validar que todos los campos requeridos estén llenos
+    const requiredFields = ['nombre', 'telefono', 'email', 'direccion', 'fechaEvento', 'horaEntrega', 'horaRecogida'];
+    const emptyFields = requiredFields.filter(field => !formData[field]);
     
-    if (missingFields.length > 0) {
-      toast.error('Por favor, completa todos los campos requeridos');
+    if (emptyFields.length > 0) {
+      toast.error('Por favor completa todos los campos obligatorios');
       return;
     }
 
-    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${formatWhatsAppMessage()}`;
-    window.open(whatsappUrl, '_blank');
-    
-    // Limpiar el carrito después de enviar
-    limpiarCarrito();
+    try {
+      // Abrir WhatsApp con el mensaje
+      const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${formatWhatsAppMessage()}`;
+      window.open(whatsappUrl, '_blank');
+      
+      // Vaciar el carrito después de enviar el mensaje
+      await vaciarCarrito();
+      
+      // Mostrar mensaje de éxito
+      toast.success('¡Tu pedido ha sido enviado! Te contactaremos pronto.');
+      
+      // Resetear el formulario
+      setFormData({
+        nombre: user?.displayName || '',
+        telefono: '',
+        email: user?.email || '',
+        direccion: '',
+        coordenadas: null,
+        fechaEvento: '',
+        horaEntrega: '',
+        horaRecogida: '',
+        notasAdicionales: ''
+      });
+      
+      setShowForm(false);
+    } catch (error) {
+      console.error('Error al procesar el pedido:', error);
+      toast.error('Hubo un error al procesar tu pedido. Por favor, intenta de nuevo.');
+    }
   };
 
   const scrollToElement = (element) => {
@@ -231,6 +322,11 @@ const Carrito = () => {
           </div>
 
           <div className="form-group">
+            <label>Selecciona la ubicación del evento (opcional)</label>
+            <LocationPicker onLocationSelect={handleLocationSelect} />
+          </div>
+
+          <div className="form-group">
             <label htmlFor="direccion">Dirección del evento *</label>
             <input
               type="text"
@@ -252,35 +348,42 @@ const Carrito = () => {
                 name="fechaEvento"
                 value={formData.fechaEvento}
                 onChange={handleInputChange}
+                min={today}
                 required
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="horaInicio">Hora de inicio *</label>
-              <input
-                type="time"
-                id="horaInicio"
-                name="horaInicio"
-                value={formData.horaInicio}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="duracion">Duración aproximada (horas)</label>
+              <label htmlFor="horaEntrega">Hora de entrega *</label>
               <select
-                id="duracion"
-                name="duracion"
-                value={formData.duracion}
+                id="horaEntrega"
+                name="horaEntrega"
+                value={formData.horaEntrega}
                 onChange={handleInputChange}
+                required
               >
-                <option value="4">4 horas</option>
-                <option value="6">6 horas</option>
-                <option value="8">8 horas</option>
-                <option value="12">12 horas</option>
-                <option value="24">24 horas</option>
+                {timeOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="horaRecogida">Hora de recogida *</label>
+              <select
+                id="horaRecogida"
+                name="horaRecogida"
+                value={formData.horaRecogida}
+                onChange={handleInputChange}
+                required
+              >
+                {timeOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
